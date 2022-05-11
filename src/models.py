@@ -32,15 +32,6 @@ class Characters(db.Model):
     def __repr__(self):
         return '<characters %r>' % self.charName
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "Name": self.charName,
-            "Birth Year": self.charBirthYear,
-            "Gender": self.charGender,
-            "Hair Color": self.charHairColor,
-            "Eye Color": self.charEyeColor
-        }
 
 class Planets(db.Model):
     __tablename__ = 'planets'
@@ -54,14 +45,6 @@ class Planets(db.Model):
     def __repr__(self):
         return '<planets %r>' % self.planetName
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "Name": self.planetName,
-            "Climate": self.planetClimate,
-            "Diameter": self.planetDiameter,
-            "Population": self.planetPopulation
-        }
 
 class Vehicles(db.Model):
     __tablename__ = 'vehicles'
@@ -79,18 +62,6 @@ class Vehicles(db.Model):
     def __repr__(self):
         return '<vehicles %r>' % self.model
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "Cargo Capacity": self.cargoCapacity,
-            "Consumables": self.consumables,
-            "Cost In Credits": self.costInCredits,
-            "Crew": self.crew,
-            "Manufacturer": self.manufacturer,
-            "Max Speed": self.maxSpeed,
-            "Model": self.model,
-            "Passengers": self.passengers,
-        }
 
 class Favorites(db.Model):
     __tablename__ = 'favorites'
@@ -102,12 +73,3 @@ class Favorites(db.Model):
 
     def __repr__(self):
         return '<favorites %r>' % self.id
-
-    def serialize(self):
-        return {
-            "ID of this Favorite": self.id,
-            "Favorite of User": self.userId,
-            "Character ID": self.charId,
-            "Vehicle ID": self.vehicleId,
-            "Planet ID": self.planetId
-        }
