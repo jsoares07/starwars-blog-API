@@ -49,7 +49,7 @@ class Planets(db.Model):
     planetClimate = db.Column(db.String(15), nullable=False)
     planetDiameter = db.Column(db.Integer, nullable=False)
     planetPopulation = db.Column(db.Integer, nullable=False)
-    planetrel = db.relationship("Favorites")
+    planetRel = db.relationship("Favorites")
 
     def __repr__(self):
         return '<planets %r>' % self.planetName
