@@ -13,63 +13,116 @@ class User(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
+            "uid": self.id,
             "email": self.email,
             # do not serialize the password, its a security breach
         }
 
+class People(db.Model):
+    __tablename__ = 'people'
 
-class Characters(db.Model):
-    __tablename__ = 'characters'
     id = db.Column(db.Integer, primary_key=True)
-    charName = db.Column(db.String(120), nullable=False)
-    charBirthYear = db.Column(db.String(15), nullable=True)
-    charGender = db.Column(db.String(15), nullable=True)
-    charHairColor = db.Column(db.String(15), nullable=True)
-    charEyeColor = db.Column(db.String(15), nullable=True)
-    charRel = db.relationship("Favorites")
+    name = db.Column(db.String(120), nullable=False)
+    birth_year = db.Column(db.String(15), nullable=True)
+    gender = db.Column(db.String(120), nullable=False)
+    hair_color = db.Column(db.String(120), nullable=False)
+    eye_color = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return '<characters %r>' % self.charName
+        return '<People %r>' % self.name
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "birth_year": self.birth_year,
+            "gender": self.gender,
+            "hair_color": self.hair_color,
+            "eye_color": self.eye_color,
+        }
+
+    def create_people(name, birth_year, gender, hair_color, eye_color):
+        people = People(name=name, birth_year=birth_year, gender=gender, hair_color=hair_color, eye_color=eye_color)
+        db.session.add(people)
+        db.session.commit()
+
+    def get_people(uid):
+        people = People.query.filter_by(uid=uid).first()
+        return People.serialize(people)
+
+    def get_all_people():
+        all_people = People.query.all()
+        all_people = list(map(lambda people: people.serialize(), all_people))
+        return all_people
+
+    def delete_people(uid):
+        people = People.query.get(uid)
+        db.session.delete(people)
+        db.session.commit()
 
 class Planets(db.Model):
     __tablename__ = 'planets'
     id = db.Column(db.Integer, primary_key=True)
-    planetName = db.Column(db.String(120), nullable=False)
-    planetClimate = db.Column(db.String(15), nullable=False)
-    planetDiameter = db.Column(db.Integer, nullable=False)
-    planetPopulation = db.Column(db.Integer, nullable=False)
-    planetRel = db.relationship("Favorites")
+    name = db.Column(db.String(120), nullable=False)
+    climate = db.Column(db.String(15), nullable=False)
+    diameter = db.Column(db.Integer, nullable=False)
+    population = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return '<planets %r>' % self.planetName
+        return '<Planets %r>' % self.name
+
+    def serialize(self):
+        return {
+            "uid": self.id,
+            "name": self.name,
+            "climate": self.climate,
+            "diameter": self.diameter,
+            "population": self.population
+
+        }
 
 
-class Vehicles(db.Model):
-    __tablename__ = 'vehicles'
+    def create_planets(name, climate, diameter, population):
+        planets = Planets(name=name, climate=climate, diameter=diameter, population=population)
+        db.session.add(planets)
+        db.session.commit()
+
+    def get_planets(uid):
+        planets = Planets.query.filter_by(uid=uid).first()
+        return Planets.serialize(planets)
+
+    def get_all_planets():
+        all_planets = Planets.query.all()
+        all_planets = list(map(lambda planets: planets.serialize(), all_planets))
+        return all_planets
+
+    def delete_planets(uid):
+        planets = Planets.query.get(uid)
+        db.session.delete(planets)
+        db.session.commit()
+
+
+class Favourites(db.Model):
+    __tablename__ = 'favourites'
+
     id = db.Column(db.Integer, primary_key=True)
-    cargoCapacity = db.Column(db.Integer, nullable=False)
-    consumables = db.Column(db.Integer, nullable=False)
-    costInCredits = db.Column(db.Integer, nullable=False)
-    crew = db.Column(db.Integer, nullable=False)
-    manufacturer = db.Column(db.String(30), nullable=False)
-    maxSpeed = db.Column(db.Integer, nullable=False)
-    model = db.Column(db.String(30), nullable=False)
-    passengers = db.Column(db.Integer, nullable=False)
-    vehicleRel = db.relationship("Favorites")
+    user_id = db.Column(db.String(120), nullable=False)
+    favouritetype = db.Column(db.String(120), nullable=False)
+    favourite_id = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return '<vehicles %r>' % self.model
+        return '<Favourites %r>' % self.name
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "favouritetype": self.favouritetype,
+            "favourite_id": self.favourite_id,
+        }
 
 
-class Favorites(db.Model):
-    __tablename__ = 'favorites'
-    id = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    charId = db.Column(db.Integer, db.ForeignKey("characters.id"), nullable=True)
-    vehicleId = db.Column(db.Integer, db.ForeignKey("vehicles.id"), nullable=True)
-    planetId = db.Column(db.Integer, db.ForeignKey("planets.id"), nullable=True)
-
-    def __repr__(self):
-        return '<favorites %r>' % self.id
+    @classmethod
+    def get_all(cls):
+        users = cls.query.all()
+        return users
